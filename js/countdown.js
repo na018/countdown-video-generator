@@ -19,10 +19,13 @@ class CountdownTimer {
         this.warningTime = null; // half duration
         this.dangerTime = 3;
         this.lastWholeSecond = null;
+        this.onFinished = null;
 
         this.animate = this.animate.bind(this);
 
         this.updateRenderer();
+
+
     }
 
     //------------------------------------------
@@ -92,10 +95,22 @@ class CountdownTimer {
 
         this.updateRenderer();
 
-        if (this.remaining > 0)
+
+
+        if (this.remaining > 0) {
+
             requestAnimationFrame(this.animate);
-        else
+
+        } else {
+
             this.running = false;
+            this.started = false;
+
+            if (this.onFinished) {
+                this.onFinished();
+            }
+
+        }
 
         const wholeSecond = Math.ceil(this.remaining);
 
@@ -188,5 +203,6 @@ class CountdownTimer {
         return this.remaining === 0;
 
     }
+
 
 }
