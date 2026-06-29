@@ -22,7 +22,7 @@ class CountdownTimer {
 
         this.animate = this.animate.bind(this);
 
-        this.render();
+        this.updateRenderer();
     }
 
     //------------------------------------------
@@ -59,7 +59,7 @@ class CountdownTimer {
 
         this.remaining = this.duration;
 
-        this.render();
+        this.updateRenderer();
     }
 
     setDuration(seconds) {
@@ -69,7 +69,7 @@ class CountdownTimer {
 
         this.warningTime = seconds / 2;
 
-        this.render();
+        this.updateRenderer();
     }
 
     //------------------------------------------
@@ -90,7 +90,7 @@ class CountdownTimer {
                 0
             );
 
-        this.render();
+        this.updateRenderer();
 
         if (this.remaining > 0)
             requestAnimationFrame(this.animate);
@@ -130,7 +130,7 @@ class CountdownTimer {
     // Rendering State
     //------------------------------------------
 
-    render() {
+    updateRenderer() {
 
         // -----------------------------
         // Ring Progress
@@ -171,6 +171,21 @@ class CountdownTimer {
             color
 
         });
+
+    }
+
+    toggle() {
+
+        if (this.running)
+            this.pause();
+        else
+            this.start();
+
+    }
+
+    isFinished() {
+
+        return this.remaining === 0;
 
     }
 

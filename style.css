@@ -88,4 +88,14 @@ canvas {
     height: var(--watch-size);
 
     aspect-ratio: 1;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+
+    #start,
+    #pause {
+        display: none;
+    }
+
 }
