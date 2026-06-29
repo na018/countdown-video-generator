@@ -12,6 +12,7 @@ class CountdownTimer {
 
         this.startTime = 0;
         this.pauseTime = 0;
+        this.started = false;
 
         // Ring starts moving 0.5 seconds later
         this.ringDelay = 0.5;
@@ -33,6 +34,11 @@ class CountdownTimer {
         if (this.running)
             return;
 
+        if (!this.started) {
+            this.remaining = this.duration;
+            this.started = true;
+    }
+
         this.running = true;
 
         this.startTime =
@@ -48,7 +54,7 @@ class CountdownTimer {
     }
 
     reset() {
-
+        this.started = false;
         this.running = false;
 
         this.remaining = this.duration;

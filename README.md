@@ -1,14 +1,20 @@
 # Countdown Video Generator
 
-Generate beautiful countdown videos directly in your browser.
+A browser-based countdown timer for creating beautiful video overlays.
 
 ## Features
 
 - Canvas rendering
 - Smooth animations
+- Audio countdown
 - Color transitions
-- Green screen export
-- Video download
-- Runs entirely in the browser
+- Green-screen export (coming soon)
+- 100% client-side
 
-No backend required.
+## Roadmap
+
+- [x] Countdown
+- [x] Audio
+- [ ] Video export
+- [ ] Green screen rendering
+- [ ] MP4 generation

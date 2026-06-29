@@ -8,8 +8,9 @@ class AudioPlayer {
 
     async init() {
 
-        if (this.ctx)
-            return;
+        if (!this.ctx) {
+            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
 
         this.ctx = new AudioContext();
 

@@ -20,18 +20,21 @@ body{
 
     min-height:100vh;
 
+    padding:20px;
+
 }
 
-.toolbar{
-
-    margin:30px;
+.toolbar {
 
     display:flex;
 
+    flex-wrap:wrap;
+
+    justify-content:center;
+
     gap:12px;
 
-    align-items:center;
-
+    padding:20px;
 }
 
 input{
@@ -64,22 +67,25 @@ button{
 
 }
 
-.canvas-container{
+.canvas-container {
 
-    display:flex;
+    width: 100%;
 
-    justify-content:center;
+    display: flex;
 
-    align-items:center;
-
-    width:100%;
+    justify-content: center;
 
 }
 
-canvas{
+:root {
+    --watch-size: min(90vw, 500px);
+}
 
-    width:500px;
+canvas {
 
-    height:500px;
+    width: var(--watch-size);
 
+    height: var(--watch-size);
+
+    aspect-ratio: 1;
 }
