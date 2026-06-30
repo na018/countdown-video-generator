@@ -11,6 +11,14 @@ window.addEventListener("load", async () => {
     //--------------------------------------------------
 
     const canvas = document.getElementById("countdownCanvas");
+    //--------------------------------------------------
+    // Export canvas
+    //--------------------------------------------------
+
+    const exportCanvas = document.createElement("canvas");
+
+    exportCanvas.width = 1080;
+    exportCanvas.height = 1080;
 
     //--------------------------------------------------
     // Core components
@@ -20,9 +28,12 @@ window.addEventListener("load", async () => {
 
     const renderer = new CanvasRenderer(canvas);
 
-    const recorder = new Recorder(canvas);
+    const exportRenderer =
+        new CanvasRenderer(exportCanvas);
 
-    const timer = new CountdownTimer(renderer, audio);
+    const recorder = new Recorder(exportCanvas);
+
+    const timer = new CountdownTimer(audio);
 
     //--------------------------------------------------
     // UI Elements
@@ -31,15 +42,74 @@ window.addEventListener("load", async () => {
     const secondsInput = document.getElementById("seconds");
 
     const startButton = document.getElementById("start");
-
     const pauseButton = document.getElementById("pause");
-
     const resetButton = document.getElementById("reset");
-
     const downloadButton = document.getElementById("download");
 
     //--------------------------------------------------
-    // Helper functions
+    // Rendering
+    //--------------------------------------------------
+    function resizeCanvas() {
+
+        const size = Math.min(
+            window.innerWidth * 0.9,
+            650
+        );
+
+        canvas.width = size;
+        canvas.height = size;
+
+        renderer.resize(
+            canvas.width,
+            canvas.height
+        );
+
+        render();
+
+    }
+
+    window.addEventListener(
+        "resize",
+        resizeCanvas
+    );
+
+    resizeCanvas();
+
+    // Force one final render after everything
+    requestAnimationFrame(() => {
+        render();
+    });
+
+    function render() {
+        console.log(
+            canvas.width,
+            canvas.height
+        );
+
+        const state =
+            timer.getState();
+
+        renderer.render(state);
+
+        if (recorder.recording) {
+
+            exportRenderer.render(
+                state,
+                {
+                    greenScreen: true
+                }
+            );
+
+        }
+
+    }
+
+    timer.onUpdate = render;
+
+    render();
+
+    //--------------------------------------------------
+    // Helper Functions
     //--------------------------------------------------
 
     async function initializeAudio() {
@@ -84,14 +154,15 @@ window.addEventListener("load", async () => {
 
         timer.reset();
 
+        render();
+
     };
 
     canvas.onclick = async () => {
 
         await initializeAudio();
 
-        if (!timer.started)
-            prepareTimer();
+        prepareTimer();
 
         timer.toggle();
 
@@ -107,6 +178,8 @@ window.addEventListener("load", async () => {
             Number(secondsInput.value)
         );
 
+        render();
+
         timer.onFinished = async () => {
 
             await recorder.stop();
@@ -115,10 +188,20 @@ window.addEventListener("load", async () => {
 
         };
 
+
+        // Draw the very first frame
+        exportRenderer.render(
+            timer.getState(),
+            {
+                greenScreen: true
+            }
+        );
+
+        await new Promise(requestAnimationFrame);
+
         recorder.start();
 
         timer.start();
-
     };
 
 });

@@ -7,34 +7,47 @@ class CanvasRenderer {
 
         this.theme = {
 
+
             background: "#151515",
 
-            glass: "rgba(255,255,255,0.08)",
+            glass: "rgba(255,255,255,.08)",
 
-            track: "rgba(255,255,255,0.12)",
+            track: "rgba(255,255,255,.08)",
+
+            text: "#F7F7F7",
+
+            shadow: "rgba(0,0,0,.55)",
 
             blue: "#3DA9FC",
 
+            blueLight: "#6CC9FF",
+
             yellow: "#FFD60A",
+
+            yellowLight: "#FFF27A",
 
             red: "#FF3B30",
 
-            text: "#FFFFFF",
-
-            shadow: "rgba(0,0,0,0.45)",
+            redLight: "#F9554D",
 
             ...theme
 
         };
 
-        this.resize();
+        this.resize(
+            canvas.width,
+            canvas.height
+        );
 
     }
 
-    resize() {
+    resize(width, height) {
 
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        this.width = width;
+        this.height = height;
 
         this.cx = this.width / 2;
         this.cy = this.height / 2;
@@ -63,6 +76,29 @@ class CanvasRenderer {
     clear() {
 
         this.ctx.clearRect(
+            0,
+            0,
+            this.width,
+            this.height
+        );
+
+    }
+
+    drawBackground(options = {}) {
+
+        const ctx = this.ctx;
+
+        if (options.greenScreen) {
+
+            ctx.fillStyle = "#00FF00";
+
+        } else {
+
+            ctx.fillStyle = this.theme.background;
+
+        }
+
+        ctx.fillRect(
             0,
             0,
             this.width,
@@ -103,9 +139,31 @@ class CanvasRenderer {
 
     //----------------------------------------------------
 
-    drawGlass() {
+    drawGlass(settings = {}) {
 
         const ctx = this.ctx;
+
+        //------------------------------------
+        // Dark watch face
+        //------------------------------------
+
+        ctx.beginPath();
+
+        ctx.arc(
+            this.cx,
+            this.cy,
+            this.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#2A2A2A";
+
+        ctx.fill();
+
+        //------------------------------------
+        // Glass gradient
+        //------------------------------------
 
         const gradient = ctx.createRadialGradient(
 
@@ -133,9 +191,12 @@ class CanvasRenderer {
             Math.PI * 2
         );
 
-        ctx.fillStyle = gradient;
-
+        ctx.fillStyle = "#2A2A2A";
         ctx.fill();
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
 
         //----------------------------------------------------
         // glossy highlight
@@ -226,16 +287,15 @@ class CanvasRenderer {
 
         );
 
-        if (state.color === "#ff3b30") {
+        if (state.color === this.theme.red) {
 
             // Light red → red
-            gradient.addColorStop(0, "#ff3b30");
-            gradient.addColorStop(1, "#f9554d");
-
+            gradient.addColorStop(0, this.theme.redLight);
+            gradient.addColorStop(1, this.theme.red);
         } else {
 
             // Blue and yellow stay unchanged
-            gradient.addColorStop(0, "#6CC9FF");
+            gradient.addColorStop(0, this.theme.blueLight);
             gradient.addColorStop(1, state.color);
 
         }
@@ -289,7 +349,7 @@ class CanvasRenderer {
         const seconds =
             Math.ceil(state.remaining) % 60;
 
-        ctx.fillStyle = "#F7F7F7";
+        ctx.fillStyle = this.theme.text;
 
         ctx.shadowColor = "rgba(255,255,255,.15)";
         ctx.shadowBlur = this.size * 0.01;
@@ -318,11 +378,24 @@ class CanvasRenderer {
 
     render(state, options = {}) {
 
+
+        const settings = {
+
+            greenScreen: false,
+
+            export: false,
+
+            ...options
+
+        };
+
         this.clear();
+
+        this.drawBackground(options);
 
         this.drawShadow();
 
-        this.drawGlass();
+        this.drawGlass(settings);
 
         this.drawTrack();
 

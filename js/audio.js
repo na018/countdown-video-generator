@@ -5,14 +5,14 @@ class AudioPlayer {
         this.ctx = null;
 
     }
-
     async init() {
 
         if (!this.ctx) {
-            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-    }
 
-        this.ctx = new AudioContext();
+            this.ctx =
+                new (window.AudioContext || window.webkitAudioContext)();
+
+        }
 
         if (this.ctx.state === "suspended")
             await this.ctx.resume();

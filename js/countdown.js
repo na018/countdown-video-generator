@@ -1,8 +1,7 @@
 class CountdownTimer {
 
-    constructor(renderer, audio) {
+    constructor(audio) {
 
-        this.renderer = renderer;
         this.audio = audio;
 
         this.duration = 10;
@@ -20,10 +19,9 @@ class CountdownTimer {
         this.dangerTime = 3;
         this.lastWholeSecond = null;
         this.onFinished = null;
+        this.onUpdate = null;
 
         this.animate = this.animate.bind(this);
-
-        this.updateRenderer();
 
 
     }
@@ -40,7 +38,7 @@ class CountdownTimer {
         if (!this.started) {
             this.remaining = this.duration;
             this.started = true;
-    }
+        }
 
         this.running = true;
 
@@ -61,8 +59,9 @@ class CountdownTimer {
         this.running = false;
 
         this.remaining = this.duration;
+        if (this.onUpdate)
+            this.onUpdate();
 
-        this.updateRenderer();
     }
 
     setDuration(seconds) {
@@ -72,7 +71,9 @@ class CountdownTimer {
 
         this.warningTime = seconds / 2;
 
-        this.updateRenderer();
+        if (this.onUpdate)
+            this.onUpdate();
+
     }
 
     //------------------------------------------
@@ -93,7 +94,8 @@ class CountdownTimer {
                 0
             );
 
-        this.updateRenderer();
+        if (this.onUpdate)
+            this.onUpdate();
 
 
 
@@ -141,53 +143,6 @@ class CountdownTimer {
         }
     }
 
-    //------------------------------------------
-    // Rendering State
-    //------------------------------------------
-
-    updateRenderer() {
-
-        // -----------------------------
-        // Ring Progress
-        // -----------------------------
-
-        const elapsed = this.duration - this.remaining;
-
-        let progress;
-
-        if (elapsed <= this.ringDelay) {
-            progress = 1;
-        } else {
-
-            progress =
-                1 - (elapsed - this.ringDelay) /
-                    (this.duration - this.ringDelay);
-
-            progress = Math.max(0, progress);
-        }
-
-        // -----------------------------
-        // Ring Color
-        // -----------------------------
-
-        let color = "#3DA9FC";
-
-       if (this.remaining <= this.dangerTime)
-            color = "#ff3b30";
-        else if (this.remaining <= this.warningTime)
-            color = "#FFD60A";
-
-        this.renderer.render({
-
-            remaining: this.remaining,
-
-            progress,
-
-            color
-
-        });
-
-    }
 
     toggle() {
 
@@ -201,6 +156,55 @@ class CountdownTimer {
     isFinished() {
 
         return this.remaining === 0;
+
+    }
+
+    getState() {
+
+        const elapsed =
+            this.duration - this.remaining;
+
+        let progress;
+
+        if (elapsed <= this.ringDelay) {
+
+            progress = 1;
+
+        } else {
+
+            progress =
+                1 -
+                (elapsed - this.ringDelay) /
+                (this.duration - this.ringDelay);
+
+            progress = Math.max(0, progress);
+
+        }
+
+        let color = "#3DA9FC";
+
+        if (this.remaining <= this.dangerTime)
+            color = "#FF3B30";
+        else if (this.remaining <= this.warningTime)
+            color = "#FFD60A";
+
+        return {
+
+            duration: this.duration,
+
+            remaining: this.remaining,
+
+            elapsed,
+
+            progress,
+
+            color,
+
+            running: this.running,
+
+            finished: this.remaining <= 0
+
+        };
 
     }
 
