@@ -343,11 +343,14 @@ class CanvasRenderer {
 
         const ctx = this.ctx;
 
+        const display =
+            state.displayRemaining;
+
         const minutes =
-            Math.floor(state.remaining / 60);
+            Math.floor(display / 60);
 
         const seconds =
-            Math.ceil(state.remaining) % 60;
+            Math.ceil(display) % 60;
 
         ctx.fillStyle = this.theme.text;
 

@@ -108,9 +108,15 @@ class CountdownTimer {
             this.running = false;
             this.started = false;
 
-            if (this.onFinished) {
-                this.onFinished();
-            }
+            if (this.onUpdate)
+                this.onUpdate();
+
+            setTimeout(() => {
+
+                if (this.onFinished)
+                    this.onFinished();
+
+            }, 500);
 
         }
 
@@ -192,7 +198,9 @@ class CountdownTimer {
 
             duration: this.duration,
 
-            remaining: this.remaining,
+            //remaining: this.remaining,
+            displayRemaining:
+                Math.min(this.remaining, this.duration),
 
             elapsed,
 

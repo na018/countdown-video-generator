@@ -197,9 +197,15 @@ window.addEventListener("load", async () => {
             }
         );
 
-        await new Promise(requestAnimationFrame);
-
         recorder.start();
+
+        await new Promise(resolve =>
+            requestAnimationFrame(resolve)
+        );
+
+        await new Promise(resolve =>
+            requestAnimationFrame(resolve)
+        );
 
         timer.start();
     };
