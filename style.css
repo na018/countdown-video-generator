@@ -6,7 +6,13 @@
 
 body{
 
-    background:#181818;
+    background:
+        radial-gradient(
+            circle at center,
+            #222222 0%,
+            #151515 60%,
+            #101010 100%
+        );
 
     color:white;
 
@@ -89,6 +95,7 @@ canvas {
 
     aspect-ratio: 1;
     cursor: pointer;
+
 }
 
 @media (max-width: 768px) {

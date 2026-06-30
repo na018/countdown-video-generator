@@ -5,7 +5,7 @@ class CountdownTimer {
         this.renderer = renderer;
         this.audio = audio;
 
-        this.duration = 30;
+        this.duration = 10;
         this.remaining = this.duration;
 
         this.running = false;

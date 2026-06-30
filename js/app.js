@@ -1,8 +1,20 @@
 window.addEventListener("load", async () => {
 
+    //--------------------------------------------------
+    // Wait for fonts
+    //--------------------------------------------------
+
     await document.fonts.ready;
 
+    //--------------------------------------------------
+    // Canvas
+    //--------------------------------------------------
+
     const canvas = document.getElementById("countdownCanvas");
+
+    //--------------------------------------------------
+    // Core components
+    //--------------------------------------------------
 
     const audio = new AudioPlayer();
 
@@ -12,27 +24,63 @@ window.addEventListener("load", async () => {
 
     const timer = new CountdownTimer(renderer, audio);
 
+    //--------------------------------------------------
+    // UI Elements
+    //--------------------------------------------------
+
     const secondsInput = document.getElementById("seconds");
 
-    document.getElementById("start").onclick = async () => {
+    const startButton = document.getElementById("start");
+
+    const pauseButton = document.getElementById("pause");
+
+    const resetButton = document.getElementById("reset");
+
+    const downloadButton = document.getElementById("download");
+
+    //--------------------------------------------------
+    // Helper functions
+    //--------------------------------------------------
+
+    async function initializeAudio() {
 
         await audio.init();
 
-        // Only set the duration before the first start
+    }
+
+    function prepareTimer() {
+
         if (!timer.started) {
-            timer.setDuration(Number(secondsInput.value));
+
+            timer.setDuration(
+                Number(secondsInput.value)
+            );
+
         }
 
+    }
+
+    //--------------------------------------------------
+    // Event Handlers
+    //--------------------------------------------------
+
+    startButton.onclick = async () => {
+
+        await initializeAudio();
+
+        prepareTimer();
+
         timer.start();
+
     };
 
-    document.getElementById("pause").onclick = () => {
+    pauseButton.onclick = () => {
 
         timer.pause();
 
     };
 
-    document.getElementById("reset").onclick = () => {
+    resetButton.onclick = () => {
 
         timer.reset();
 
@@ -40,23 +88,18 @@ window.addEventListener("load", async () => {
 
     canvas.onclick = async () => {
 
-    await audio.init();
-
-    if (timer.running)
-        timer.pause();
-    else {
+        await initializeAudio();
 
         if (!timer.started)
-            timer.setDuration(Number(secondsInput.value));
+            prepareTimer();
 
-        timer.start();
-    }
+        timer.toggle();
 
-    document
-    .getElementById("download")
-    .onclick = async () => {
+    };
 
-        await audio.init();
+    downloadButton.onclick = async () => {
+
+        await initializeAudio();
 
         timer.reset();
 
@@ -64,32 +107,18 @@ window.addEventListener("load", async () => {
             Number(secondsInput.value)
         );
 
+        timer.onFinished = async () => {
+
+            await recorder.stop();
+
+            timer.onFinished = null;
+
+        };
+
         recorder.start();
 
         timer.start();
 
-        const interval = setInterval(async () => {
-
-            if (timer.remaining <= 0) {
-
-                clearInterval(interval);
-
-                await recorder.stop();
-
-            }
-
-        },100);
-
     };
-
-    timer.onFinished = async () => {
-
-        await recorder.stop();
-
-    };
-
-    // end of load event listener
-
-};
 
 });

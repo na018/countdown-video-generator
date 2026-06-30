@@ -79,20 +79,21 @@ class CanvasRenderer {
 
         ctx.save();
 
-        ctx.shadowColor = this.theme.shadow;
-        ctx.shadowBlur = this.shadowBlur;
-
         ctx.beginPath();
 
         ctx.arc(
             this.cx,
             this.cy,
-            this.radius + this.trackWidth * 0.6,
+            this.radius + this.trackWidth,
             0,
             Math.PI * 2
         );
 
         ctx.fillStyle = this.theme.glass;
+
+        ctx.shadowColor = "rgba(0,0,0,0.55)";
+        ctx.shadowBlur = this.size * 0.10;
+        ctx.shadowOffsetY = this.size * 0.02;
 
         ctx.fill();
 
@@ -106,6 +107,22 @@ class CanvasRenderer {
 
         const ctx = this.ctx;
 
+        const gradient = ctx.createRadialGradient(
+
+            this.cx - this.radius * 0.25,
+            this.cy - this.radius * 0.30,
+            this.radius * 0.10,
+
+            this.cx,
+            this.cy,
+            this.radius
+
+        );
+
+        gradient.addColorStop(0.0, "rgba(255,255,255,0.14)");
+        gradient.addColorStop(0.4, "rgba(255,255,255,0.08)");
+        gradient.addColorStop(1.0, "rgba(255,255,255,0.02)");
+
         ctx.beginPath();
 
         ctx.arc(
@@ -116,9 +133,37 @@ class CanvasRenderer {
             Math.PI * 2
         );
 
-        ctx.fillStyle = this.theme.glass;
+        ctx.fillStyle = gradient;
 
         ctx.fill();
+
+        //----------------------------------------------------
+        // glossy highlight
+        //----------------------------------------------------
+
+        // ctx.beginPath();
+
+        // ctx.ellipse(
+
+        //     this.cx,
+
+        //     this.cy - this.radius * 0.45,
+
+        //     this.radius * 0.55,
+
+        //     this.radius * 0.18,
+
+        //     0,
+
+        //     0,
+
+        //     Math.PI * 2
+
+        // );
+
+        // ctx.fillStyle = "rgba(255,255,255,.05)";
+
+        // ctx.fill();
 
     }
 
@@ -131,14 +176,20 @@ class CanvasRenderer {
         ctx.beginPath();
 
         ctx.arc(
+
             this.cx,
+
             this.cy,
+
             this.trackRadius,
+
             0,
+
             Math.PI * 2
+
         );
 
-        ctx.strokeStyle = this.theme.track;
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
 
         ctx.lineWidth = this.trackWidth;
 
@@ -157,36 +208,75 @@ class CanvasRenderer {
 
         const start = -Math.PI / 2;
 
-        const end =
-            start +
-            Math.PI * 2 * state.progress;
+        const end = start + Math.PI * 2 * state.progress;
+
+        //------------------------------------------
+        // Gradient
+        //------------------------------------------
+
+        const gradient = ctx.createLinearGradient(
+
+            this.cx - this.radius,
+
+            this.cy - this.radius,
+
+            this.cx + this.radius,
+
+            this.cy + this.radius
+
+        );
+
+        if (state.color === "#ff3b30") {
+
+            // Light red → red
+            gradient.addColorStop(0, "#ff3b30");
+            gradient.addColorStop(1, "#f9554d");
+
+        } else {
+
+            // Blue and yellow stay unchanged
+            gradient.addColorStop(0, "#6CC9FF");
+            gradient.addColorStop(1, state.color);
+
+        }
+
+        //------------------------------------------
 
         ctx.beginPath();
 
         ctx.arc(
+
             this.cx,
+
             this.cy,
+
             this.trackRadius,
+
             start,
+
             end
+
         );
 
-        ctx.strokeStyle = state.color;
+        ctx.strokeStyle = gradient;
 
         ctx.lineWidth = this.trackWidth;
 
         ctx.lineCap = "round";
 
-        ctx.shadowBlur = this.glowBlur;
+        //------------------------------------------
+        // Glow
+        //------------------------------------------
 
         ctx.shadowColor = state.color;
+
+        ctx.shadowBlur = this.glowBlur * 3;
 
         ctx.stroke();
 
         ctx.shadowBlur = 0;
 
     }
-
     //----------------------------------------------------
 
     drawText(state) {
@@ -199,7 +289,10 @@ class CanvasRenderer {
         const seconds =
             Math.ceil(state.remaining) % 60;
 
-        ctx.fillStyle = this.theme.text;
+        ctx.fillStyle = "#F7F7F7";
+
+        ctx.shadowColor = "rgba(255,255,255,.15)";
+        ctx.shadowBlur = this.size * 0.01;
 
         ctx.font =
             `700 ${this.fontSize}px Inter`;
@@ -217,6 +310,7 @@ class CanvasRenderer {
             this.cy
 
         );
+        ctx.shadowBlur = 0;
 
     }
 
