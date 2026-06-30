@@ -9,17 +9,22 @@ class Recorder {
 
         this.chunks = [];
 
+        this.recording = false;
+
     }
 
     start() {
+
+        if (this.recording)
+            return;
+
+        this.recording = true;
 
         this.chunks = [];
 
         this.stream = this.canvas.captureStream(60);
 
-        this.recorder = new MediaRecorder(this.stream, {
-            mimeType: "video/webm"
-        });
+        this.recorder = new MediaRecorder(this.stream);
 
         this.recorder.ondataavailable = (e) => {
 
@@ -35,6 +40,11 @@ class Recorder {
     }
 
     stop() {
+
+        if (!this.recording)
+            return Promise.resolve();
+
+        this.recording = false;
 
         return new Promise(resolve => {
 
@@ -54,7 +64,11 @@ class Recorder {
                 a.href = url;
                 a.download = "countdown.webm";
 
+                document.body.appendChild(a);
+
                 a.click();
+
+                a.remove();
 
                 URL.revokeObjectURL(url);
 
