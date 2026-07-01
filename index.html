@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Countdown Video Generator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+
+  <script type="module" crossorigin src="/countdown-video-generator/assets/index-BE8_H3sB.js"></script>
+  <link rel="stylesheet" crossorigin href="/countdown-video-generator/assets/index-tzrW8kKJ.css">
+</head>
+
+<body>
+
+    <div class="toolbar">
+
+        <label>Seconds</label>
+
+        <input id="seconds" type="number" value="10" min="1">
+
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="reset">Reset</button>
+        <button id="download">Download</button>
+
+    </div>
+
+    <div class="canvas-container">
+
+        <canvas id="countdownCanvas" width="500" height="500">
+        </canvas>
+
+    </div>
+
+
+</body>
+
+</html>
