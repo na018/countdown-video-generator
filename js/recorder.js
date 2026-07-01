@@ -1,4 +1,4 @@
-class Recorder {
+export class Recorder {
 
     constructor(canvas) {
 
@@ -22,14 +22,55 @@ class Recorder {
 
         this.chunks = [];
 
+        //----------------------------------------
+        // Capture the canvas
+        //----------------------------------------
+
         this.stream = this.canvas.captureStream(60);
 
-        this.recorder = new MediaRecorder(this.stream);
+        //----------------------------------------
+        // Choose the best codec
+        //----------------------------------------
 
-        this.recorder.ondataavailable = (e) => {
+        const mimeTypes = [
 
-            if (e.data.size > 0)
-                this.chunks.push(e.data);
+            "video/webm;codecs=vp9,opus",
+
+            "video/webm;codecs=vp8,opus",
+
+            "video/webm",
+
+            ""
+
+        ];
+
+        let mimeType = "";
+
+        for (const type of mimeTypes) {
+
+            if (type === "" || MediaRecorder.isTypeSupported(type)) {
+
+                mimeType = type;
+                break;
+
+            }
+
+        }
+
+        console.log("Using:", mimeType);
+
+        //----------------------------------------
+        // Recorder
+        //----------------------------------------
+
+        this.recorder = mimeType
+            ? new MediaRecorder(this.stream, { mimeType })
+            : new MediaRecorder(this.stream);
+
+        this.recorder.ondataavailable = (event) => {
+
+            if (event.data.size > 0)
+                this.chunks.push(event.data);
 
         };
 
@@ -42,7 +83,7 @@ class Recorder {
     stop() {
 
         if (!this.recording)
-            return Promise.resolve();
+            return Promise.resolve(null);
 
         this.recording = false;
 
@@ -50,31 +91,16 @@ class Recorder {
 
             this.recorder.onstop = () => {
 
-                const blob = new Blob(
-                    this.chunks,
-                    { type: "video/webm" }
-                );
-
-                const url =
-                    URL.createObjectURL(blob);
-
-                const a =
-                    document.createElement("a");
-
-                a.href = url;
-                a.download = "countdown.webm";
-
-                document.body.appendChild(a);
-
-                a.click();
-
-                a.remove();
-
-                URL.revokeObjectURL(url);
-
                 console.log("Recording finished");
 
-                resolve();
+                const blob = new Blob(
+                    this.chunks,
+                    {
+                        type: "video/webm"
+                    }
+                );
+
+                resolve(blob);
 
             };
 

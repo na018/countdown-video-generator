@@ -1,4 +1,4 @@
-class AudioPlayer {
+export class AudioPlayer {
 
     constructor() {
 

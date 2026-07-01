@@ -1,4 +1,4 @@
-class CountdownTimer {
+export class CountdownTimer {
 
     constructor(audio) {
 

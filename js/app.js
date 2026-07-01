@@ -1,3 +1,9 @@
+import { AudioPlayer } from "./audio.js";
+import { CanvasRenderer } from "./renderer.js";
+import { CountdownTimer } from "./countdown.js";
+import { Recorder } from "./recorder.js";
+import { Converter } from "./converter.js";
+
 window.addEventListener("load", async () => {
 
     //--------------------------------------------------
@@ -34,6 +40,8 @@ window.addEventListener("load", async () => {
     const recorder = new Recorder(exportCanvas);
 
     const timer = new CountdownTimer(audio);
+
+    const converter = new Converter();
 
     //--------------------------------------------------
     // UI Elements
@@ -81,10 +89,6 @@ window.addEventListener("load", async () => {
     });
 
     function render() {
-        console.log(
-            canvas.width,
-            canvas.height
-        );
 
         const state =
             timer.getState();
@@ -182,7 +186,24 @@ window.addEventListener("load", async () => {
 
         timer.onFinished = async () => {
 
-            await recorder.stop();
+            const webm = await recorder.stop();
+
+            const mp4 = await converter.webmToMp4(webm);
+
+            const url = URL.createObjectURL(mp4);
+
+            const a = document.createElement("a");
+
+            a.href = url;
+            a.download = "countdown.mp4";
+
+            document.body.appendChild(a);
+
+            a.click();
+
+            a.remove();
+
+            URL.revokeObjectURL(url);
 
             timer.onFinished = null;
 

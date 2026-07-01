@@ -1,4 +1,4 @@
-class CanvasRenderer {
+export class CanvasRenderer {
 
     constructor(canvas, theme = {}) {
 
